@@ -1,3 +1,6 @@
 <drawables>
     <bitmap id="LauncherIcon" filename="launcher_icon.png" />
+    <bitmap id="iconConfig" filename="config.png" />
+    <bitmap id="iconWait" filename="port.png" />
+    <bitmap id="iconRace" filename="sail.png" />
 </drawables>

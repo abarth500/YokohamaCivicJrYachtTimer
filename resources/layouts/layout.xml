@@ -1,4 +1,38 @@
 <layout id="MainLayout">
-    <label x="center" y="5" text="@Strings.prompt" color="Graphics.COLOR_WHITE" justification="Graphics.TEXT_JUSTIFY_CENTER" />
-    <bitmap id="id_monkey" x="center" y="30" filename="../drawables/monkey.png" />
+    <drawable id="TimerMin" class="DrawTimerMin">
+        <param name="baseX">70</param>
+        <param name="baseY">2</param>
+        <param name="minFont">Graphics.FONT_SYSTEM_NUMBER_THAI_HOT</param>
+        <param name="minAlign">Graphics.TEXT_JUSTIFY_RIGHT</param>
+        <param name="xGap">3</param>
+        <param name="unitStr">"min."</param>
+        <param name="unitS">"m"</param>
+        <param name="unitFont">Graphics.FONT_MEDIUM</param>
+        <param name="unitAlign">Graphics.TEXT_JUSTIFY_LEFT</param>
+        <param name="foreground">Graphics.COLOR_WHITE</param>
+        <param name="background">Graphics.COLOR_TRANSPARENT</param>
+    </drawable>
+    <drawable id="ProgressCircle" class="DrawProgressCircle">
+        <param name="centerX">-27</param>
+        <param name="centerY">27</param>
+        <param name="radius">20</param>
+        <param name="bold">15</param>
+        <param name="clock">Graphics.ARC_COUNTER_CLOCKWISE</param>
+        <param name="start">90</param>
+        <param name="font">Graphics.FONT_SMALL</param>
+        <param name="foreground">Graphics.COLOR_WHITE</param>
+        <param name="background">Graphics.COLOR_TRANSPARENT</param>
+    </drawable>
+    <drawable id="statusIcon" class="DrawStatusIcon">
+        <param name="iconX">5</param>
+        <param name="iconY">20</param>
+    </drawable>
+    <drawable id="positionIndicator" class="DrawPositionIndicator">
+        <param name="posX">5</param>
+        <param name="posY">55</param>
+        <param name="font">Graphics.FONT_SYSTEM_XTINY</param>
+        <param name="align">Graphics.TEXT_JUSTIFY_LEFT</param>
+        <param name="foreground">Graphics.COLOR_WHITE</param>
+        <param name="background">Graphics.COLOR_TRANSPARENT</param>
+    </drawable>
 </layout>

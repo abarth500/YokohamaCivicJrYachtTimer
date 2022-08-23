@@ -1,0 +1,13 @@
+<resources>
+    <properties>
+        <property id="progressCircleDegree" type="number">0</property>
+        <property id="progressCircleStr" type="string">D</property>
+        <property id="timerMinMin" type="number">0</property>
+        <property id="timerStatus" type="number">0</property>
+        <property id="GPSLastLatitude" type="float">0.0</property>
+        <property id="GPSLastLongitude" type="float">0.0</property>
+        <property id="GPSLastHeading" type="float">0.0</property>
+        <property id="GPSLastSpeed" type="float">0.0</property>
+        <property id="GPSLastAccuracy" type="number">0</property>
+    </properties>
+</resources>
