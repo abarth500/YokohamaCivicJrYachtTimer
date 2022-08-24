@@ -1,0 +1,8 @@
+<resources>
+    <properties>
+        <property id="appPreStartSeconds" type="number">300</property>
+        <property id="appPreStartVibeAlertLong" type="string">300,240,180,120</property>
+        <property id="appPreStartVibeAlertShort" type="string">60,30</property>
+        <property id="appPreStartVibeAlertLast" type="string">10,9,8,7,6,5,4,3,2,1</property>
+    </properties>
+</resources>

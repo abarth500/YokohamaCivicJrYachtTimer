@@ -14,13 +14,14 @@ import Toybox.Position;
     </drawable>
 */
 
-class DrawPositionIndicator extends WatchUi.Drawable {
+class DrawTimeRecord extends WatchUi.Drawable {
     private var _posX,
         _posY,
         _font,
         _align,
         _foreground,
-        _background;
+        _background,
+        flip = true;
 
     public function initialize(params as Dictionary) {
         Drawable.initialize(params);
@@ -35,15 +36,10 @@ class DrawPositionIndicator extends WatchUi.Drawable {
     function draw(dc as Dc) as Void {
         //System.println("draw StatusIcon");
         dc.setColor(_foreground, _background);
-        var str;
-        switch (Application.Properties.getValue("GPSLastAccuracy")) {
-            case Position.QUALITY_NOT_AVAILABLE:
-            case Position.QUALITY_LAST_KNOWN:
-                str = "GPS not available!";
-                break;
-            default:
-                str = Time.now().value() % 2 == 0 ? "Lat=" + Application.Properties.getValue("GPSLastLatitude").format("%+03.5f") : "Lon=" + Application.Properties.getValue("GPSLastLongitude").format("%+03.5f");
-        }
+
+        var _best = Application.Properties.getValue("TimeRecordBEST");
+        var _last = Application.Properties.getValue("TimeRecordLAST");
+        var str = "L=" + _last / 60 + ":" + (_last % 60) + " / B=" + _best / 60 + ":" + (_best % 60);
         dc.drawText(_posX, _posY, _font, str, _align);
     }
 }

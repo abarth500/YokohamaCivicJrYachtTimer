@@ -47,8 +47,8 @@ class DrawProgressCircle extends WatchUi.Drawable {
         var str = Application.Properties.getValue("progressCircleStr");
         dc.setColor(_foreground, _background);
         dc.setPenWidth(_bold);
-        dc.drawArc(dc.getWidth() + _centerX, _centerY, _radius, _clock, _start, -1 * degree + _start);
+        dc.drawArc(_centerX, _centerY, _radius, _clock, _start, -1 * degree + _start);
         //秒表示
-        dc.drawText(dc.getWidth() + _centerX, _centerY, _font, str, Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+        dc.drawText(_centerX, _centerY, _font, str, Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
     }
 }

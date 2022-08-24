@@ -25,6 +25,7 @@ class YokohamaCivicJrYachtTimerApp extends Application.AppBase {
       Position.LOCATION_DISABLE,
       method(:onPosition)
     );
+    mTimerView.onStop();
     System.println("Stop");
     return true;
   }

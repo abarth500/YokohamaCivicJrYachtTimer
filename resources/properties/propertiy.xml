@@ -9,5 +9,7 @@
         <property id="GPSLastHeading" type="float">0.0</property>
         <property id="GPSLastSpeed" type="float">0.0</property>
         <property id="GPSLastAccuracy" type="number">0</property>
+        <property id="TimeRecordBEST" type="number">0</property>
+        <property id="TimeRecordLAST" type="number">0</property>
     </properties>
 </resources>

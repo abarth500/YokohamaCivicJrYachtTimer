@@ -1,9 +1,8 @@
-import Toybox.Lang;
+    import Toybox.Lang;
 import Toybox.System;
 import Toybox.WatchUi;
 
 class YokohamaCivicJrYachtTimerMenuDelegate extends WatchUi.MenuInputDelegate {
-
     function initialize() {
         MenuInputDelegate.initialize();
     }
@@ -15,5 +14,4 @@ class YokohamaCivicJrYachtTimerMenuDelegate extends WatchUi.MenuInputDelegate {
             System.println("item 2");
         }
     }
-
 }
