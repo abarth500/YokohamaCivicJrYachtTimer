@@ -1,2 +1,2 @@
 # Yokohama Civic Jr Yacht Timer
-A Simple Yacht Timier for Yokohama Civic Yacht Hurber Junior Yacht Club
+A Simple Yacht Timer for Yokohama Civic Yacht Harbor Junior Yacht Club

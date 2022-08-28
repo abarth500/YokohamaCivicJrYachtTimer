@@ -17,15 +17,7 @@ import Toybox.Application;
 */
 
 class DrawProgressCircle extends WatchUi.Drawable {
-    private var _centerX = -27,
-        _centerY = 27,
-        _radius = 20,
-        _bold = 15,
-        _clock = Graphics.ARC_COUNTER_CLOCKWISE,
-        _start = 90,
-        _font = Graphics.FONT_SMALL,
-        _foreground = Graphics.COLOR_WHITE,
-        _background = Graphics.COLOR_TRANSPARENT;
+    private var _centerX, _centerY, _radius, _bold, _clock, _start, _font, _foreground, _background;
 
     public function initialize(params as Dictionary) {
         Drawable.initialize(params);
@@ -39,7 +31,6 @@ class DrawProgressCircle extends WatchUi.Drawable {
         _font = params.get(:font);
         _foreground = params.get(:foreground);
         _background = params.get(:background);
-        
     }
     function draw(dc as Dc) as Void {
         //System.println("draw");

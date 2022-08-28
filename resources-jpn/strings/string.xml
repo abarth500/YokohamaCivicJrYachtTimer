@@ -1,0 +1,8 @@
+<strings>
+    <string id="AppName">Yokohama Civic Jr Yacht Timer</string>
+    <string id="ActivityName">ヨットレース</string>
+    <string id="ToggleMenuTitle">メニュー</string>
+    <string id="Toggle_1_Label">追加情報</string>
+    <string id="Toggle_1_OnSubLabel">時計</string>
+    <string id="Toggle_1_OffSubLabel">緯度経度</string>
+</strings>

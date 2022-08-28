@@ -76,5 +76,7 @@
         <param name="unitAlign">Graphics.TEXT_JUSTIFY_LEFT</param>
         <param name="foreground">Graphics.COLOR_WHITE</param>
         <param name="background">Graphics.COLOR_TRANSPARENT</param>
+        <param name="foregroundFastest">Graphics.COLOR_BLACK</param>
+        <param name="backgroundFastest">Graphics.COLOR_WHITE</param>
     </drawable>
 </layout>

@@ -23,7 +23,7 @@ import Toybox.Application.Storage;
 */
 
 class DrawFastestIndicator extends WatchUi.Drawable {
-    private var _x, _y, _speedFont, _speedAlign, _xGap, _unitStr, _unitFont, _unitAlign, _foreground, _background;
+    private var _x, _y, _speedFont, _speedAlign, _xGap, _unitStr, _unitFont, _unitAlign, _foreground, _background, _foregroundFastest, _backgroundFastest;
 
     public function initialize(params as Dictionary) {
         Drawable.initialize(params);
@@ -38,6 +38,8 @@ class DrawFastestIndicator extends WatchUi.Drawable {
         _unitAlign = params.get(:unitAlign);
         _foreground = params.get(:foreground);
         _background = params.get(:background);
+        _foregroundFastest = params.get(:foregroundFastest);
+        _backgroundFastest = params.get(:backgroundFastest);
     }
     function draw(dc as Dc) as Void {
         //System.println("draw");
@@ -57,7 +59,11 @@ class DrawFastestIndicator extends WatchUi.Drawable {
         if (Application.Properties.getValue("timerStatus") != CONSTANT.STATUS_RACE) {
             delta = "PAUSE";
         }
-        dc.setColor(_foreground, _background);
+        if (_speed == fastest) {
+            dc.setColor(_foregroundFastest, _backgroundFastest);
+        } else {
+            dc.setColor(_foreground, _background);
+        }
         dc.drawText(_x, _y, _speedFont, "F=" + fastest.format("%2.2f"), _speedAlign);
         dc.drawText(_x + _xGap, _y + fontHeightGap, _unitFont, _unitStr + " (" + delta + ")", _unitAlign);
         //dc.drawText(_x + _xGap, _y + fontHeightGap + fontHeightGap, _unitFont, heading, _unitAlign);
