@@ -17,28 +17,31 @@ import Toybox.Application;
 */
 
 class DrawStatusIcon extends WatchUi.Drawable {
-    private var _iconX, _iconY, iconConfig, iconWait, iconRace;
+    private var _iconX, _iconY, iconConfig_race, iconPrestart_race, iconStarted_race, iconConfig_practice, iconPrestart_practice, iconStarted_practice;
 
     public function initialize(params as Dictionary) {
         Drawable.initialize(params);
         //System.println(params.keys()[]);
         _iconX = params.get(:iconX);
         _iconY = params.get(:iconY);
-        iconConfig = WatchUi.loadResource(Rez.Drawables.iconConfig);
-        iconWait = WatchUi.loadResource(Rez.Drawables.iconWait);
-        iconRace = WatchUi.loadResource(Rez.Drawables.iconRace);
+        iconConfig_race = WatchUi.loadResource(Rez.Drawables.iconConfig_race);
+        iconPrestart_race = WatchUi.loadResource(Rez.Drawables.iconPrestart_race);
+        iconStarted_race = WatchUi.loadResource(Rez.Drawables.iconStarted_race);
+        iconConfig_practice = WatchUi.loadResource(Rez.Drawables.iconConfig_practice);
+        iconPrestart_practice = WatchUi.loadResource(Rez.Drawables.iconPrestart_practice);
+        iconStarted_practice = WatchUi.loadResource(Rez.Drawables.iconStarted_practice);
     }
     function draw(dc as Dc) as Void {
         //System.println("draw StatusIcon");
         switch (Application.Properties.getValue("timerStatus")) {
             case CONSTANT.STATUS_CONFIG:
-                dc.drawBitmap(_iconX, _iconY, iconConfig);
+                dc.drawBitmap(_iconX, _iconY, Application.Properties.getValue("menuModeRace") ? iconConfig_race : iconConfig_practice);
                 break;
-            case CONSTANT.STATUS_WAIT:
-                dc.drawBitmap(_iconX, _iconY, iconWait);
+            case CONSTANT.STATUS_PRESTART:
+                dc.drawBitmap(_iconX, _iconY, Application.Properties.getValue("menuModeRace") ? iconPrestart_race : iconPrestart_practice);
                 break;
-            case CONSTANT.STATUS_RACE:
-                dc.drawBitmap(_iconX, _iconY, iconRace);
+            case CONSTANT.STATUS_STARTED:
+                dc.drawBitmap(_iconX, _iconY, Application.Properties.getValue("menuModeRace") ? iconStarted_race : iconStarted_practice);
                 break;
         }
     }

@@ -28,25 +28,33 @@ class YokohamaCivicJrYachtTimerView extends WatchUi.View {
         "Short" => [],
         "Last" => [],
     };
+    private var initPoint = {
+        "lat" => null,
+        "lon" => null,
+    };
+    private var startLine = null;
+    private var beforeStartlineLeft = null;
+    private var nowStartlineLeft = null;
+    private var lapStartTime = null;
     function initialize() {
         System.println("Init View");
         View.initialize();
         //current_precount = 300;
-        //Application.Properties.getValue("appPreStartSeconds");
+        //Application.Properties.getValue("appPreStartSecondsRace");
         mainTimer = new Timer.Timer();
         adjusterTimer = new Timer.Timer();
         Storage.clearValues();
         Application.Properties.setValue("progressCircleDegree", 0);
         Application.Properties.setValue("progressCircleStr", "D");
-        Application.Properties.setValue("timerMinMin", 0);
-        Application.Properties.setValue("timerStatus", 0);
+        Application.Properties.setValue("timerSecRace", 0);
+        Application.Properties.setValue("timerStatus", -1);
         Application.Properties.setValue("GPSLastLatitude", 0.0);
         Application.Properties.setValue("GPSLastLongitude", 0.0);
         Application.Properties.setValue("GPSLastHeading", 0.0);
         Application.Properties.setValue("GPSLastSpeed", 0.0);
         Application.Properties.setValue("GPSLastAccuracy", 0);
-        Application.Properties.setValue("TimeRecordBEST", 0);
-        Application.Properties.setValue("TimeRecordLAST", 0);
+        Application.Properties.setValue("TimeRecordRaceBEST", 0);
+        Application.Properties.setValue("TimeRecordRaceLAST", 0);
         if (Attention has :vibrate) {
             //バイブ機能があれば
             var _appPreStartVibeAlertLong = Application.Properties.getValue("appPreStartVibeAlertLong");
@@ -117,7 +125,7 @@ class YokohamaCivicJrYachtTimerView extends WatchUi.View {
         Application.Properties.setValue("GPSLastHeading", _heading);
         Application.Properties.setValue("GPSLastSpeed", _speed);
         Application.Properties.setValue("GPSLastAccuracy", info.accuracy);
-        if (Application.Properties.getValue("timerStatus") == CONSTANT.STATUS_RACE) {
+        if (Application.Properties.getValue("timerStatus") == CONSTANT.STATUS_STARTED) {
             //レース時のみ
             var _maxSpeedHeading = Storage.getValue("maxSpeedHeading");
             _heading = _heading < 0 ? _heading + 360 : _heading;
@@ -153,7 +161,11 @@ class YokohamaCivicJrYachtTimerView extends WatchUi.View {
     function onShow() as Void {}
 
     function updateTimerMin(min) {
-        Application.Properties.setValue("timerMinMin", min);
+        if (Application.Properties.getValue("menuModeRace")) {
+            Application.Properties.setValue("timerSecRace", min);
+        } else {
+            Application.Properties.setValue("timerSecPractice", min);
+        }
     }
     function updateCircle(degree, str) {
         Application.Properties.setValue("progressCircleDegree", degree);
@@ -166,6 +178,18 @@ class YokohamaCivicJrYachtTimerView extends WatchUi.View {
         dc.clear();
         View.onUpdate(dc);
     }
+    function startLineLeft(p) {
+        //p >= 0なら左
+        // 準備の計算
+        var vx1 = startLine[1]["lon"] - startLine[0]["lon"];
+        var vy1 = startLine[1]["lat"] - startLine[0]["lat"];
+        var vx2 = p["lon"] - startLine[0]["lon"];
+        var vy2 = p["lat"] - startLine[0]["lat"];
+        // 判断用の値
+        var ans = vx1 * vy2 - vy1 * vx2;
+        //System.println(ans);
+        return ans >= 0;
+    }
     function yachtTimer() {
         var circleDegree, circleStr, timerMin, myTime_secounds, myTime_minutes;
         if (startTime == null) {
@@ -173,49 +197,150 @@ class YokohamaCivicJrYachtTimerView extends WatchUi.View {
             Application.Properties.setValue("timerStatus", CONSTANT.STATUS_CONFIG);
             circleDegree = Gregorian.info(nowTime, Time.FORMAT_MEDIUM).sec * 6;
             circleStr = "D";
-            timerMin = Application.Properties.getValue("appPreStartSeconds") / 60;
+            if (Application.Properties.getValue("menuModeRace")) {
+                timerMin = Application.Properties.getValue("appPreStartSecondsRace") / 60;
+            } else {
+                timerMin = Application.Properties.getValue("appPreStartSecondsPractice");
+                initPoint["lat"] = Application.Properties.getValue("GPSLastLatitude");
+                initPoint["lon"] = Application.Properties.getValue("GPSLastLongitude");
+            }
         } else {
             myTime = nowTime.subtract(startTime).value();
-            if (myTime >= Application.Properties.getValue("appPreStartSeconds")) {
-                //レース中
-                if (Application.Properties.getValue("timerStatus") == CONSTANT.STATUS_WAIT) {
-                    //レーススタート
-                    if (Attention has :vibrate) {
-                        Attention.vibrate(vibeProfiles["start"]);
+            if (Application.Properties.getValue("menuModeRace")) {
+                if (myTime >= Application.Properties.getValue("appPreStartSecondsRace")) {
+                    //レース中
+                    if (Application.Properties.getValue("timerStatus") == CONSTANT.STATUS_PRESTART) {
+                        //レーススタート
+                        if (Attention has :vibrate) {
+                            Attention.vibrate(vibeProfiles["start"]);
+                        }
+                        session.addLap();
+                        fieldID += 1;
+                        var msg = session.createField("status", fieldID, FitContributor.DATA_TYPE_STRING, { :mesgType => FitContributor.MESG_TYPE_LAP, :count => 10 });
+                        msg.setData("Started");
                     }
-                    session.addLap();
-                    fieldID += 1;
-                    var msg = session.createField("status", fieldID, FitContributor.DATA_TYPE_STRING, { :mesgType => FitContributor.MESG_TYPE_LAP, :count => 10 });
-                    msg.setData("Start");
-                }
-                Application.Properties.setValue("timerStatus", CONSTANT.STATUS_RACE);
-                //dc.drawBitmap(5, 20, iconRace);
-                myTime_secounds = (myTime - Application.Properties.getValue("appPreStartSeconds")) % 60;
-                myTime_minutes = (myTime - Application.Properties.getValue("appPreStartSeconds")) / 60;
-                circleDegree = myTime_secounds * 6;
-                circleStr = myTime_secounds;
-                timerMin = myTime_minutes;
-            } else {
-                //Pre-Start
-                Application.Properties.setValue("timerStatus", CONSTANT.STATUS_WAIT);
-                //dc.drawBitmap(5, 20, iconWait);
-                var untilStart = Application.Properties.getValue("appPreStartSeconds") - myTime;
-                myTime_secounds = untilStart % 60;
-                myTime_minutes = untilStart / 60;
-                circleDegree = myTime_secounds * -6;
-                circleStr = myTime_secounds;
-                timerMin = myTime_minutes;
-                var alertTypes = preStartVibeAlert.keys();
-                var vibeProfile = null;
-                for (var c = 0; c < alertTypes.size(); c += 1) {
-                    for (var cc = 0; cc < preStartVibeAlert[alertTypes[c]].size(); cc += 1) {
-                        if (preStartVibeAlert[alertTypes[c]][cc] == untilStart) {
-                            vibeProfile = vibeProfiles[alertTypes[c]];
+                    Application.Properties.setValue("timerStatus", CONSTANT.STATUS_STARTED);
+                    //dc.drawBitmap(5, 20, iconStarted);
+                    myTime_secounds = (myTime - Application.Properties.getValue("appPreStartSecondsRace")) % 60;
+                    myTime_minutes = (myTime - Application.Properties.getValue("appPreStartSecondsRace")) / 60;
+                    circleDegree = myTime_secounds * 6;
+                    circleStr = myTime_secounds;
+                    timerMin = myTime_minutes;
+                } else {
+                    //Pre-Start
+                    Application.Properties.setValue("timerStatus", CONSTANT.STATUS_PRESTART);
+                    //dc.drawBitmap(5, 20, iconPrestart);
+                    var untilStart = Application.Properties.getValue("appPreStartSecondsRace") - myTime;
+                    myTime_secounds = untilStart % 60;
+                    myTime_minutes = untilStart / 60;
+                    circleDegree = myTime_secounds * -6;
+                    circleStr = myTime_secounds;
+                    timerMin = myTime_minutes;
+                    var alertTypes = preStartVibeAlert.keys();
+                    var vibeProfile = null;
+                    for (var c = 0; c < alertTypes.size(); c += 1) {
+                        for (var cc = 0; cc < preStartVibeAlert[alertTypes[c]].size(); cc += 1) {
+                            if (preStartVibeAlert[alertTypes[c]][cc] == untilStart) {
+                                vibeProfile = vibeProfiles[alertTypes[c]];
+                            }
                         }
                     }
+                    if (vibeProfile != null) {
+                        Attention.vibrate(vibeProfile);
+                    }
                 }
-                if (vibeProfile != null) {
-                    Attention.vibrate(vibeProfile);
+            } else {
+                //Practice
+                if (myTime >= Application.Properties.getValue("appPreStartSecondsPractice")) {
+                    //Practice - STARERD
+                    if (Application.Properties.getValue("timerStatus") == CONSTANT.STATUS_PRESTART) {
+                        //START NOW
+                        System.println("started:" + initPoint["lat"]);
+                        if (initPoint["lat"] != null) {
+                            var nowPoint = {
+                                "lat" => Application.Properties.getValue("GPSLastLatitude"),
+                                "lon" => Application.Properties.getValue("GPSLastLongitude"),
+                            };
+                            // a = (y1-y2)/(x1-x2), b = y1 - ax1
+                            var a = (initPoint["lat"] - nowPoint["lat"]) / (initPoint["lon"] - nowPoint["lon"]);
+                            var b = nowPoint["lat"] - a * nowPoint["lon"];
+                            // _b = y - _a x
+                            var _a = -1 / a;
+                            var _b = nowPoint["lat"] - _a * nowPoint["lon"];
+                            var orgPoint = {
+                                "lat" => 0,
+                                "lon" => _b,
+                            };
+                            startLine = [orgPoint, nowPoint];
+                            System.println("startline = [[" + orgPoint["lat"] +","+ orgPoint["lon"] + "] , [" + nowPoint["lat"] + "," + nowPoint["lon"] + "]]");
+                            beforeStartlineLeft = startLineLeft(initPoint);
+                            nowStartlineLeft = !beforeStartlineLeft;
+                            session.addLap();
+                            lapStartTime = myTime;
+                            Application.Properties.setValue("timerStatus", CONSTANT.STATUS_STARTED);
+                            myTime_secounds = 0;
+                            myTime_minutes = 0;
+                            circleDegree = myTime_secounds * 6;
+                            circleStr = myTime_secounds;
+                            timerMin = myTime_minutes;
+                        } else {
+                            //GPSを補足していないので現在時刻をスタートタイムに設定し、また計測する
+                            startTime = Time.now();
+                            myTime_secounds = 0;
+                            myTime_minutes = 0;
+                            circleDegree = myTime_secounds * 6;
+                            circleStr = myTime_secounds;
+                            timerMin = myTime_minutes;
+                        }
+                    } else {
+                        //レース
+                        //スタートライン交差チェック(交差していたらラップ追加)
+                        // lapStart
+                        var nowPoint = {
+                            "lat" => Application.Properties.getValue("GPSLastLatitude"),
+                            "lon" => Application.Properties.getValue("GPSLastLongitude"),
+                        };
+                        var startlineLeft = startLineLeft(nowPoint);
+                        //System.println("b:" + (beforeStartlineLeft ? "left" : "right"));
+                        //System.println("0:" + (nowStartlineLeft ? "left" : "right"));
+                        //System.println("1:" + (startlineLeft ? "left" : "right"));
+                        //System.println((startlineLeft ? "left" : "right") + " <-> " + (beforeStartlineLeft ? "left" : "right") + " = " + (nowStartlineLeft ? "left" : "right"));
+                        if (startlineLeft != beforeStartlineLeft and nowStartlineLeft == beforeStartlineLeft) {
+                            //スタートライン越えなら！
+                            System.println("New LAP");
+                            //タイム記録(ラスト、ベスト)
+                            var lapTime = myTime - lapStartTime;
+                            Application.Properties.setValue("TimeRecordPracticeLAST", lapTime);
+                            var lapBest = Application.Properties.getValue("TimeRecordParcticeBEST");
+                            Application.Properties.setValue("TimeRecordPracticeBEST", lapBest > lapTime or lapBest == 0 ? lapTime : lapBest);
+                            //バイブ
+                            if (Attention has :vibrate) {
+                                Attention.vibrate(vibeProfiles[lapBest > lapTime ? "goalBest" : "goal"]);
+                            }
+                            //ラップ追加
+                            lapStartTime = myTime;
+                            session.addLap();
+                            fieldID += 1;
+                            var msg = session.createField("status", fieldID, FitContributor.DATA_TYPE_STRING, { :mesgType => FitContributor.MESG_TYPE_LAP, :count => 10 });
+                            msg.setData("New-Lap");
+                        }
+                        nowStartlineLeft = startLineLeft;
+                        myTime_secounds = (myTime - lapStartTime) % 60;
+                        myTime_minutes = (myTime - lapStartTime) / 60;
+                        circleDegree = myTime_secounds * 6;
+                        circleStr = myTime_secounds;
+                        timerMin = myTime_minutes;
+                    }
+                } else {
+                    //Practice - PRESTART
+                    //TODO:　一秒毎バイブ
+                    var untilStart = Application.Properties.getValue("appPreStartSecondsPractice") - myTime;
+                    myTime_secounds = untilStart % 60;
+                    myTime_minutes = untilStart / 60;
+                    circleDegree = myTime_secounds * -6;
+                    circleStr = myTime_secounds;
+                    timerMin = myTime_minutes;
+                    Application.Properties.setValue("timerStatus", CONSTANT.STATUS_PRESTART);
                 }
             }
         }
@@ -227,19 +352,23 @@ class YokohamaCivicJrYachtTimerView extends WatchUi.View {
         if (startTime == null) {
             startTime = Time.now();
         } else {
-            if (Application.Properties.getValue("timerStatus") == CONSTANT.STATUS_RACE) {
+            if (Application.Properties.getValue("timerStatus") == CONSTANT.STATUS_STARTED) {
                 //ゴール！
-                var lapTime = myTime - Application.Properties.getValue("appPreStartSeconds");
-                Application.Properties.setValue("TimeRecordLAST", lapTime);
-                var lapBest = Application.Properties.getValue("TimeRecordBEST");
-                Application.Properties.setValue("TimeRecordBEST", lapBest > lapTime or lapBest == 0 ? lapTime : lapBest);
-                if (Attention has :vibrate) {
-                    Attention.vibrate(vibeProfiles[lapBest > lapTime ? "goalBest" : "goal"]);
+                if (Application.Properties.getValue("menuModeRace")) {
+                    var lapTime = myTime - Application.Properties.getValue("appPreStartSecondsRace");
+                    Application.Properties.setValue("TimeRecordRaceLAST", lapTime);
+                    var lapBest = Application.Properties.getValue("TimeRecordRaceBEST");
+                    Application.Properties.setValue("TimeRecordRaceBEST", lapBest > lapTime or lapBest == 0 ? lapTime : lapBest);
+                    if (Attention has :vibrate) {
+                        Attention.vibrate(vibeProfiles[lapBest > lapTime ? "goalBest" : "goal"]);
+                    }
+                } else {
+                    //なにもない
                 }
                 session.addLap();
                 fieldID += 1;
                 var msg = session.createField("status", fieldID, FitContributor.DATA_TYPE_STRING, { :mesgType => FitContributor.MESG_TYPE_LAP, :count => 10 });
-                msg.setData("Break");
+                msg.setData("Config");
             } else if (Application.Properties.getValue("timerStatus") == CONSTANT.STATUS_CONFIG) {
                 //Pre Start開始
                 session.addLap();
@@ -254,14 +383,22 @@ class YokohamaCivicJrYachtTimerView extends WatchUi.View {
     function up() {
         if (Application.Properties.getValue("timerStatus") == CONSTANT.STATUS_CONFIG) {
             //current_precount += 60;
-            Application.Properties.setValue("appPreStartSeconds", Application.Properties.getValue("appPreStartSeconds") + 60);
+            if (Application.Properties.getValue("menuModeRace")) {
+                Application.Properties.setValue("appPreStartSecondsRace", Application.Properties.getValue("appPreStartSecondsRace") + 60);
+            } else {
+                Application.Properties.setValue("appPreStartSecondsPractice", Application.Properties.getValue("appPreStartSecondsPractice") + 1);
+            }
             WatchUi.requestUpdate();
         }
     }
     function down() {
         if (Application.Properties.getValue("timerStatus") == CONSTANT.STATUS_CONFIG) {
             //current_precount -= 60;
-            Application.Properties.setValue("appPreStartSeconds", Application.Properties.getValue("appPreStartSeconds") - 60);
+            if (Application.Properties.getValue("menuModeRace")) {
+                Application.Properties.setValue("appPreStartSecondsRace", Application.Properties.getValue("appPreStartSecondsRace") - 60);
+            } else {
+                Application.Properties.setValue("appPreStartSecondsPractice", Application.Properties.getValue("appPreStartSecondsPractice") - 1);
+            }
             WatchUi.requestUpdate();
         }
     }

@@ -7,6 +7,8 @@
         <param name="xGap">3</param>
         <param name="unitStr">"min."</param>
         <param name="unitS">"m"</param>
+        <param name="unitStr_Practice">"sec."</param>
+        <param name="unitS_Practice">"s"</param>
         <param name="unitFont">Graphics.FONT_MEDIUM</param>
         <param name="unitAlign">Graphics.TEXT_JUSTIFY_LEFT</param>
         <param name="foreground">Graphics.COLOR_WHITE</param>

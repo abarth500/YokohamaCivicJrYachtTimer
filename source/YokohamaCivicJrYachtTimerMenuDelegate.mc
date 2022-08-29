@@ -31,6 +31,10 @@ class YokohamaCivicJrYachtTimerMenuDelegate extends WatchUi.Menu2InputDelegate {
             System.println("Menu extraInfo");
             item = item as ToggleMenuItem;
             Application.Properties.setValue("menuExtraInfoClock", item.isEnabled());
+        }else if (item.getId().toString().equals("modeRace")) {
+            System.println("Menu modeRace");
+            item = item as ToggleMenuItem;
+            Application.Properties.setValue("menuModeRace", item.isEnabled());
         }
     }
 }

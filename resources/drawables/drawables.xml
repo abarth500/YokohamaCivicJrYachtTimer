@@ -1,6 +1,9 @@
 <drawables>
     <bitmap id="LauncherIcon" filename="appicon.png" />
-    <bitmap id="iconConfig" filename="config.png" />
-    <bitmap id="iconWait" filename="port.png" />
-    <bitmap id="iconRace" filename="sail.png" />
+    <bitmap id="iconConfig_race" filename="config.png" />
+    <bitmap id="iconPrestart_race" filename="prestart.png" />
+    <bitmap id="iconStarted_race" filename="started.png" />
+    <bitmap id="iconConfig_practice" filename="p_config.png" />
+    <bitmap id="iconPrestart_practice" filename="p_prestart.png" />
+    <bitmap id="iconStarted_practice" filename="p_started.png" />
 </drawables>

@@ -56,7 +56,7 @@ class DrawFastestIndicator extends WatchUi.Drawable {
         var fastest = _maxSpeedHeading[bin] < _maxSpeedHeading[binm] ? _maxSpeedHeading[binm] : _maxSpeedHeading[bin];
         fastest = fastest < _maxSpeedHeading[binp] ? _maxSpeedHeading[binp] : fastest;
         var delta = _speed == fastest ? "FASTEST" : (_speed - fastest).format("%2.2f");
-        if (Application.Properties.getValue("timerStatus") != CONSTANT.STATUS_RACE) {
+        if (Application.Properties.getValue("timerStatus") != CONSTANT.STATUS_STARTED) {
             delta = "PAUSE";
         }
         if (_speed == fastest) {

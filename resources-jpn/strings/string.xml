@@ -5,4 +5,7 @@
     <string id="Toggle_1_Label">追加情報</string>
     <string id="Toggle_1_OnSubLabel">時計</string>
     <string id="Toggle_1_OffSubLabel">緯度経度</string>
+    <string id="Toggle_2_Label">計測モード</string>
+    <string id="Toggle_2_OnSubLabel">レース</string>
+    <string id="Toggle_2_OffSubLabel">練習</string>
 </strings>

@@ -14,6 +14,11 @@ class YokohamaCivicJrYachtTimerDelegate extends WatchUi.BehaviorDelegate {
         //var _menu = new Rez.Menus.MainMenu();
         var _menu = new WatchUi.Menu2({ :title => Rez.Strings.ToggleMenuTitle });
         _menu.addItem(
+            new WatchUi.ToggleMenuItem(Rez.Strings.Toggle_2_Label, { :enabled => Rez.Strings.Toggle_2_OnSubLabel, :disabled => Rez.Strings.Toggle_2_OffSubLabel }, "modeRace", Application.Properties.getValue("menuModeRace"), {
+                :alignment => WatchUi.MenuItem.MENU_ITEM_LABEL_ALIGN_LEFT,
+            })
+        );
+        _menu.addItem(
             new WatchUi.ToggleMenuItem(Rez.Strings.Toggle_1_Label, { :enabled => Rez.Strings.Toggle_1_OnSubLabel, :disabled => Rez.Strings.Toggle_1_OffSubLabel }, "extraInfo", Application.Properties.getValue("menuExtraInfoClock"), {
                 :alignment => WatchUi.MenuItem.MENU_ITEM_LABEL_ALIGN_LEFT,
             })

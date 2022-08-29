@@ -37,8 +37,8 @@ class DrawTimeRecord extends WatchUi.Drawable {
         //System.println("draw StatusIcon");
         dc.setColor(_foreground, _background);
 
-        var _best = Application.Properties.getValue("TimeRecordBEST");
-        var _last = Application.Properties.getValue("TimeRecordLAST");
+        var _best = Application.Properties.getValue("TimeRecordRaceBEST");
+        var _last = Application.Properties.getValue("TimeRecordRaceLAST");
         var str = "L=" + _last / 60 + ":" + (_last % 60) + " / B=" + _best / 60 + ":" + (_best % 60);
         dc.drawText(_posX, _posY, _font, str, _align);
     }

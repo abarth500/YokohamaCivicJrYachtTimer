@@ -6,4 +6,7 @@
     <string id="Toggle_1_Label">Extra Info</string>
     <string id="Toggle_1_OnSubLabel">Clock</string>
     <string id="Toggle_1_OffSubLabel">GPS</string>
+    <string id="Toggle_2_Label">Race or Practice</string>
+    <string id="Toggle_2_OnSubLabel">Race</string>
+    <string id="Toggle_2_OffSubLabel">Practice</string>
 </strings>
